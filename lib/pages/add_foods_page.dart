@@ -3,6 +3,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:random_foods/components/form_input.dart';
 import 'package:random_foods/components/image_selector.dart';
 import 'package:random_foods/components/text_icon_button.dart';
+import 'package:random_foods/models/food.dart';
+import 'package:random_foods/service/database/db_operation.dart';
+import 'package:random_foods/utils/picture_operation.dart';
 
 class AddFoodsPage extends StatefulWidget {
   const AddFoodsPage({Key? key}) : super(key: key);
@@ -13,6 +16,7 @@ class AddFoodsPage extends StatefulWidget {
 
 class _AddFoodsPageState extends State<AddFoodsPage> {
   final TextEditingController _name = TextEditingController();
+  final PictureOperation _po = PictureOperation();
   XFile? imageFile;
 
   @override
@@ -47,7 +51,19 @@ class _AddFoodsPageState extends State<AddFoodsPage> {
                 text: '保存',
                 icon: Icons.add,
                 onTap: () {
-                  print('${_name.text}, ${imageFile?.name}');
+                  DBOperation(tableName: 'foods').createTable(
+                    fields: [
+                      Field(name: 'id', type: 'INTEGER PRIMARY KEY AUTOINCREMENT'),
+                      Field(name: 'name', type: 'TEXT'),
+                      Field(name: 'image', type: 'TEXT'),
+                      Field(name: 'times', type: 'INTEGER'),
+                      Field(name: 'datetime', type: 'DATETIME')
+                    ],
+                  ).execute().then((value) {
+                    value.insert(Food(name: 'hello', image: 'eeee')).then((value) {
+                      value.query();
+                    });
+                  });
                 },
               ),
             ],

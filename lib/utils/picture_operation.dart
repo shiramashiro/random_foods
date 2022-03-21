@@ -9,7 +9,4 @@ class PictureOperation {
 
   /// 1. 将突变上传到项目中
   /// 2. 提供一个回调函数，然后调用 json_operation，把 json 数据写入到文件中。
-  upload() {
-
-  }
 }
