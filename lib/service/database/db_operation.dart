@@ -1,63 +1,79 @@
-import 'package:random_foods/models/food.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+typedef OnSelectSuccess = void Function(Map<String, dynamic> result);
+typedef OnInsertSuccess = Map<String, Object?> Function();
+
+/// 在使用 SQLite 创建表时，需要字段名称以及字段的类型。因此，Field 属于一个约束，在创建表时发挥了重要作用。
 class Field {
   String name;
+
+  /// 字段类型主要有以下几种：整数：INTEGER；字符：TEXT；主键：PRIMARY KEY 或 PRIMARY KEY AUTOINCREMENT。
   String type;
 
   Field({required this.name, required this.type});
 }
 
-class DBOperation {
-  String _sql = '';
-  String tableName;
-  late Database _database;
+/// 主要通过 Operation 进行增删改查操作。Table 类是专门来创建表格的类。
+class Table {
+  /// 执行 SQL 语句之后获得一个 Database 对象，以供 Operation 能够使用增删改查。
+  Future<Database> executeSql({
+    required String sql,
+    required String table,
+  }) async {
+    return await openDatabase(
+      join(await getDatabasesPath(), table),
+      onCreate: (db, version) => db.execute(sql),
+      version: 1,
+    );
+  }
 
-  DBOperation({required this.tableName});
-
-  DBOperation createTable({
-    required List<Field> fields,
-  }) {
-    _sql = 'CREATE TABLE $tableName(';
+  /// 合并字段形成一份完整的 SQL 语句。
+  String mergeSql(List<Field> fields, String table) {
+    String sql = 'CREATE TABLE $table(';
     for (int i = 0; i < fields.length; i++) {
       String fragment = '${fields[i].name} ${fields[i].type}';
       if (i == fields.length - 1) {
-        _sql += fragment;
+        sql += fragment;
       } else {
-        _sql += fragment + ',';
+        sql += fragment + ',';
       }
     }
-    _sql += ')';
+    return sql += ')';
+  }
+
+  /// 创建完表格之后，返回一个 Operation，以便于后续操作。
+  Future<DBOperation> create(DBOperation op, List<Field> fields) async {
+    Database database = await executeSql(sql: mergeSql(fields, op.table), table: op.table);
+    return op.setDatabase(database, op);
+  }
+}
+
+class DBOperation {
+  final String table;
+  late Database _db;
+
+  DBOperation({required this.table});
+
+  DBOperation setDatabase(Database db, DBOperation op) {
+    _db = db;
+    return op;
+  }
+
+  Future<DBOperation> connect() async {
+    _db = await openDatabase(join(await getDatabasesPath(), table));
     return this;
   }
 
-  Future<DBOperation> execute() async {
-    _database = await openDatabase(
-      join(await getDatabasesPath(), tableName),
-      onCreate: (db, version) {
-        return db.execute(_sql);
-      },
-      version: 1,
-    );
-    return this;
+  Future<DBOperation> createTable({required List<Field> fields}) {
+    return Table().create(this, fields);
   }
 
-  Future<DBOperation> insert(Food data) async {
-    await _database.insert(
-      tableName,
-      data.toJson(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    return this;
+  void insert({required OnInsertSuccess model}) async {
+    await _db.insert(table, model(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  void query() async {
-    List<Map<String, dynamic>> maps = await _database.query(tableName);
-    List.generate(maps.length, (i) {
-      print(Food(
-        name: maps[i]['name'],
-      ).name);
-    });
+  Future<List<Map<String, dynamic>>> selectAll() async {
+    return await _db.query(table);
   }
 }

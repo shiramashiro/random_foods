@@ -51,17 +51,9 @@ class _AddFoodsPageState extends State<AddFoodsPage> {
                 text: '保存',
                 icon: Icons.add,
                 onTap: () {
-                  DBOperation(tableName: 'foods').createTable(
-                    fields: [
-                      Field(name: 'id', type: 'INTEGER PRIMARY KEY AUTOINCREMENT'),
-                      Field(name: 'name', type: 'TEXT'),
-                      Field(name: 'image', type: 'TEXT'),
-                      Field(name: 'times', type: 'INTEGER'),
-                      Field(name: 'datetime', type: 'DATETIME')
-                    ],
-                  ).execute().then((value) {
-                    value.insert(Food(name: 'hello', image: 'eeee')).then((value) {
-                      value.query();
+                  DBOperation(table: 'foods').connect().then((database) {
+                    database.selectAll().then((value) {
+                      print(value);
                     });
                   });
                 },

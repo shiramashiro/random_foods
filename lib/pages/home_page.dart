@@ -20,9 +20,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     setState(() {
-      RandomFoods().getFood().then((food) {
-        _food = food;
-      });
+      // RandomFoods().getFood().then((food) {
+      //   _food = food;
+      // });
     });
   }
 
@@ -55,9 +55,9 @@ class _HomePageState extends State<HomePage> {
               child: TextIconButton(
                 onTap: () {
                   setState(() {
-                    RandomFoods().getFood().then((food) {
-                      _food = food;
-                    });
+                    // RandomFoods().getFood().then((food) {
+                    //   _food = food;
+                    // });
                   });
                 },
                 icon: Icons.query_stats_outlined,
