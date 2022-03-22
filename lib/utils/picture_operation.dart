@@ -1,12 +1,28 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class PictureOperation {
   final ImagePicker _picker = ImagePicker();
 
-  Future<XFile?> select() async {
+  Future<XFile?> readImageFromPhoto() async {
     return await _picker.pickImage(source: ImageSource.gallery);
   }
 
-  /// 1. 将突变上传到项目中
-  /// 2. 提供一个回调函数，然后调用 json_operation，把 json 数据写入到文件中。
+  Future<String> _getDir() async {
+    Directory dir = await getApplicationSupportDirectory();
+    return dir.path;
+  }
+
+  writeImageIntoDir(Uint8List bytes, String imgName, {String imgFormat = 'jpg'}) async {
+    String path = await _getDir();
+    File('$path/$imgName.$imgFormat').writeAsBytes(bytes);
+  }
+
+  Future<Uint8List> readImageFromDir(String imgName, {String imgFormat = 'jpg'}) async {
+    String path = await _getDir();
+    return File('$path/$imgName.$imgFormat').readAsBytes();
+  }
 }

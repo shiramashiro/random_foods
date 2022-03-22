@@ -46,7 +46,7 @@ class _ImageSelectorState extends State<ImageSelector> {
       children: [
         InkWell(
           onTap: () {
-            PictureOperation().select().then((value) {
+            PictureOperation().readImageFromPhoto().then((value) {
               setState(() => _imgFile = value);
               if (widget.onImagePicked != null) widget.onImagePicked!(value!);
               _createSelectedImage();
