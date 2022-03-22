@@ -50,12 +50,7 @@ class _AddFoodsPageState extends State<AddFoodsPage> {
               TextIconButton(
                 text: '保存',
                 icon: Icons.add,
-                onTap: () {
-                  DBOperation(table: 'foods').connect().then((database) {
-                    database.selectAll().then((value) {
-                      print(value);
-                    });
-                  });
+                onTap: () async {
                 },
               ),
             ],
