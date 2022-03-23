@@ -31,7 +31,6 @@ class FoodCard extends StatelessWidget {
                 '吃过 ${food?.times ?? 0} 次',
                 style: const TextStyle(fontSize: 15),
               ),
-              Text('最近一次在 ${food?.datetime ?? '2022-3-21'}')
             ],
           ),
         ],

@@ -10,6 +10,8 @@ class TableField {
 }
 
 typedef DatabaseIsExists = void Function();
+typedef DatabaseNotExists = void Function();
+typedef QuerySuccess = void Function(List<Map<String, Object?>>);
 
 /// 操作表数据时，必须要连接数据库。
 class Operation {
@@ -17,12 +19,15 @@ class Operation {
     return await openDatabase(join(await getDatabasesPath(), table));
   }
 
-  dbExists(String table, DatabaseIsExists isExists) async {
-    bool dbExists = await databaseExists(table);
-    if (dbExists) {
+  dbExists(
+    String table, {
+    required DatabaseIsExists isExists,
+    DatabaseNotExists? notExists,
+  }) async {
+    if (await databaseExists(table)) {
       isExists();
     } else {
-      throw Exception('The $table database is not exists. please make sure you have created the database.');
+      if (notExists != null) notExists();
     }
   }
 }
@@ -41,9 +46,9 @@ class DatabaseOp extends Operation {
   }
 
   String _mergeSql(
-      List<TableField> fields,
-      String table,
-      ) {
+    List<TableField> fields,
+    String table,
+  ) {
     String sql = 'CREATE TABLE $table(';
     for (int i = 0; i < fields.length; i++) {
       String fragment = '${fields[i].name} ${fields[i].type}';
@@ -56,8 +61,7 @@ class DatabaseOp extends Operation {
     return sql += ')';
   }
 
-  /// 创建表
-  void createTable({
+  Future createTable({
     required String table,
     required List<TableField> fields,
   }) async {
@@ -66,25 +70,31 @@ class DatabaseOp extends Operation {
 
   /// 删除表
   void deleteTable(String table) {
-    super.dbExists(table, () async {
+    dbExists(table, isExists: () async {
       deleteDatabase('${await getDatabasesPath()}/$table');
     });
   }
 
   void insert(String table, Map<String, Object?> values) {
-    super.dbExists(table, () async {
+    dbExists(table, isExists: () async {
       Database db = await super.getDatabase(table);
-      db.insert(table, values).then((value) {
+      db.insert(table, values).then((future) {
         db.close();
       });
     });
   }
 
-  void select(String table) {
-    super.dbExists(table, () async {
+  void select(
+    String table, {
+    required QuerySuccess success,
+    String? where,
+  }) {
+    dbExists(table, isExists: () async {
       Database db = await super.getDatabase(table);
-      var s = await db.query(table);
-      print(s);
+      db.query(table, where: where).then((result) {
+        success(result);
+        db.close();
+      });
     });
   }
 }

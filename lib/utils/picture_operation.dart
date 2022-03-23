@@ -11,18 +11,19 @@ class PictureOperation {
     return await _picker.pickImage(source: ImageSource.gallery);
   }
 
-  Future<String> _getDir() async {
+  Future<String> _getDirPath() async {
     Directory dir = await getApplicationSupportDirectory();
     return dir.path;
   }
 
-  writeImageIntoDir(Uint8List bytes, String imgName, {String imgFormat = 'jpg'}) async {
-    String path = await _getDir();
-    File('$path/$imgName.$imgFormat').writeAsBytes(bytes);
+  Future<String> writeImageIntoDir(Uint8List bytes, String imgName) async {
+    String imagePath = '${await _getDirPath()}/$imgName';
+    File(imagePath).writeAsBytes(bytes);
+    return imagePath;
   }
 
-  Future<Uint8List> readImageFromDir(String imgName, {String imgFormat = 'jpg'}) async {
-    String path = await _getDir();
-    return File('$path/$imgName.$imgFormat').readAsBytes();
+  Future<Uint8List> readImageFromDir(String imgName) async {
+    String imagePath = '${await _getDirPath()}/$imgName';
+    return File(imagePath).readAsBytes();
   }
 }

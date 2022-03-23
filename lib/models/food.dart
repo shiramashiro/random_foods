@@ -2,15 +2,17 @@ class Food {
   String? name;
   String? image;
   int? times;
-  String? datetime;
+  String? eatenDate;
+  String? entryDate;
 
-  Food({this.name, this.image, this.times, this.datetime});
+  Food({this.name, this.image, this.times, this.entryDate, this.eatenDate});
 
   Food.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     image = json['image'];
     times = json['times'];
-    datetime = json['datetime'];
+    eatenDate = json['eatenDate'];
+    entryDate = json['entryDate'];
   }
 
   Map<String, dynamic> toJson() {
@@ -18,7 +20,8 @@ class Food {
     data['name'] = name;
     data['image'] = image;
     data['times'] = times;
-    data['datetime'] = datetime;
+    data['eatenDate'] = eatenDate;
+    data['entryDate'] = entryDate;
     return data;
   }
 }
