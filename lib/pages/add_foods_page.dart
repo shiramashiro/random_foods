@@ -61,6 +61,7 @@ class _AddFoodsPageState extends State<AddFoodsPage> {
                           return Food(
                             name: _name.text,
                             image: image,
+                            times: 0,
                             entryDate: DateTimeManager().getDateTime(),
                           );
                         },

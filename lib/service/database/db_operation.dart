@@ -88,13 +88,14 @@ class DatabaseOp extends Operation {
   }) {
     dbExists(table, isExists: () async {
       var db = await super.getDatabase(table);
-      var data = await db.query(table, where: where);
-      var list = <Food>[];
-      for (var element in data) {
-        list.add(Food.fromJson(element));
-      }
-      success(list);
-      db.close();
+      await db.query(table, where: where).then((value) {
+        var list = <Food>[];
+        for (var element in value) {
+          list.add(Food.fromJson(element));
+        }
+        success(list);
+        db.close();
+      });
     });
   }
 
@@ -102,5 +103,10 @@ class DatabaseOp extends Operation {
     var db = await super.getDatabase(table);
     await db.delete(table, where: where);
     db.close();
+  }
+
+  void update(String table, Map<String, Object?> values, String where) async {
+    var db = await super.getDatabase(table);
+    await db.update(table, values, where: where);
   }
 }

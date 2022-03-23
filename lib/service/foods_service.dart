@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:random_foods/models/food.dart';
@@ -8,6 +10,10 @@ import 'package:random_foods/utils/picture_operation.dart';
 class FoodsService {
   final DatabaseOp _databaseOp = DatabaseOp();
   final PictureOperation _pictureOp = PictureOperation();
+
+  getRandom(int length) {
+    return Random().nextInt(length);
+  }
 
   Future _createTable() async {
     await _databaseOp.createTable(
@@ -59,5 +65,9 @@ class FoodsService {
   void delete(int foodId) async {
     await _databaseOp.delete('foods', 'id = $foodId');
     EasyLoading.showToast('删除成功');
+  }
+
+  void update(Food food) {
+    _databaseOp.update('foods', food.toJson(), 'id = ${food.id}');
   }
 }

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:random_foods/components/food_card.dart';
 import 'package:random_foods/components/text_icon_button.dart';
+import 'package:random_foods/components/today_food.dart';
 import 'package:random_foods/models/food.dart';
 import 'package:random_foods/pages/add_foods_page.dart';
 import 'package:random_foods/pages/show_foods_page.dart';
-import 'package:random_foods/service/random_foods.dart';
+import 'package:random_foods/service/foods_service.dart';
+import 'package:random_foods/utils/datetime_manager.dart';
 import 'package:random_foods/utils/road_map.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,17 +16,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Food? _food;
+  final FoodsService _service = FoodsService();
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      // RandomFoods().getFood().then((food) {
-      //   _food = food;
-      // });
-    });
+    setState(() {});
   }
+
+  Widget _todayFood = Container();
 
   @override
   Widget build(BuildContext context) {
@@ -62,11 +61,30 @@ class _HomePageState extends State<HomePage> {
             Center(
               child: TextIconButton(
                 onTap: () {
+                  _service.display((foods) {
+                    Food food = foods[_service.getRandom(foods.length)];
+                    setState(() {
+                      _todayFood = TodayFood(
+                        food: food,
+                        onTap: () {
+                          var times = food.times;
+                          times = times! + 1;
+                          food.times = times;
+                          food.eatenDate = DateTimeManager().getDateTime();
+                          _service.update(food);
+                          setState(() {
+                            _todayFood = Container();
+                          });
+                        },
+                      );
+                    });
+                  });
                 },
                 icon: Icons.query_builder,
                 text: '今日随机',
               ),
             ),
+            _todayFood,
           ],
         ),
       ),
