@@ -22,7 +22,7 @@ class ClickableIcon extends StatelessWidget {
       child: SizedBox(
         width: holeSize,
         height: holeSize,
-        child: iconPath == null ? Icon(icon) : Image(image: AssetImage(iconPath!)),
+        child: iconPath == null ? Icon(icon,) : Image(image: AssetImage(iconPath!)),
       ),
     );
   }

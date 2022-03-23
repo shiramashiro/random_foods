@@ -1,4 +1,5 @@
 class Food {
+  int? id;
   String? name;
   String? image;
   int? times;
@@ -8,6 +9,7 @@ class Food {
   Food({this.name, this.image, this.times, this.entryDate, this.eatenDate});
 
   Food.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     name = json['name'];
     image = json['image'];
     times = json['times'];

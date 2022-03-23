@@ -75,7 +75,7 @@ class DatabaseOp extends Operation {
 
   void insert(String table, Map<String, Object?> values) {
     dbExists(table, isExists: () async {
-      Database db = await super.getDatabase(table);
+      var db = await super.getDatabase(table);
       await db.insert(table, values);
       db.close();
     });
@@ -96,5 +96,11 @@ class DatabaseOp extends Operation {
       success(list);
       db.close();
     });
+  }
+
+  Future delete(String table, String where) async {
+    var db = await super.getDatabase(table);
+    await db.delete(table, where: where);
+    db.close();
   }
 }

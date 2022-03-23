@@ -22,8 +22,7 @@ class PictureOperation {
     return imagePath;
   }
 
-  Future<Uint8List> readImageFromDir(String imgName) async {
-    String imagePath = '${await _getDirPath()}/$imgName';
+  Future<Uint8List> readImageFromDir(String imagePath) async {
     return File(imagePath).readAsBytes();
   }
 }

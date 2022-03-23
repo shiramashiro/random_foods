@@ -12,13 +12,13 @@ class ShowFoodsPage extends StatefulWidget {
 }
 
 class _ShowFoodsPageState extends State<ShowFoodsPage> {
-  final FoodsService _fs = FoodsService();
+  final FoodsService _service = FoodsService();
   late List<Food> foods = [];
 
   @override
   void initState() {
     super.initState();
-    _fs.display((maps) {
+    _service.display((maps) {
       setState(() {
         foods = maps;
       });
@@ -30,19 +30,34 @@ class _ShowFoodsPageState extends State<ShowFoodsPage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         const Text('已有的食物'),
-        ClickableIcon(icon: Icons.refresh, onTap: () {
-          _fs.display((maps) {
-            setState(() {
-              foods = maps;
+        ClickableIcon(
+          icon: Icons.refresh,
+          onTap: () {
+            _service.display((maps) {
+              setState(() {
+                foods = maps;
+              });
             });
-          });
-        },),
+          },
+        ),
       ],
     );
   }
 
   Widget _createFoodCard(Food food) {
-    return FoodCard(food: food);
+    return FoodCard(
+      food: food,
+      deleteItem: () {
+        _service.delete(food.id!);
+        _service.display((maps) {
+          setState(() {
+            foods = maps;
+          });
+        });
+      },
+      editItem: () {
+      },
+    );
   }
 
   List<Widget> _createFoodList() {
@@ -59,8 +74,14 @@ class _ShowFoodsPageState extends State<ShowFoodsPage> {
       appBar: AppBar(
         title: _createTitle(),
       ),
-      body: Column(
-        children: _createFoodList(),
+      body: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).backgroundColor,
+        ),
+        padding: const EdgeInsets.only(top: 15, left: 10, right: 10),
+        child: Column(
+          children: _createFoodList(),
+        ),
       ),
     );
   }

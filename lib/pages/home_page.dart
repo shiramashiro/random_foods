@@ -54,26 +54,18 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     RoadMap.push(context, const ShowFoodsPage());
                   },
-                  icon: Icons.add,
-                  text: '增加食物',
+                  icon: Icons.emoji_food_beverage,
+                  text: '已有食物',
                 )
               ],
             ),
             Center(
               child: TextIconButton(
                 onTap: () {
-                  setState(() {
-                    // RandomFoods().getFood().then((food) {
-                    //   _food = food;
-                    // });
-                  });
                 },
-                icon: Icons.query_stats_outlined,
+                icon: Icons.query_builder,
                 text: '今日随机',
               ),
-            ),
-            FoodCard(
-              food: _food,
             ),
           ],
         ),

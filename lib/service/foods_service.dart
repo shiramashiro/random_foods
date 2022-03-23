@@ -35,16 +35,18 @@ class FoodsService {
     }
   }
 
-  void storage({
+  storage({
     required XFile file,
     required OnImageStorage onImageStorage,
   }) async {
     String imgPath = await _pictureOp.writeImageIntoDir(await file.readAsBytes(), file.name);
     _databaseOp.dbExists('foods', isExists: () {
       _databaseOp.insert('foods', onImageStorage(imgPath).toJson());
+      EasyLoading.showToast('保存成功');
     }, notExists: () async {
       await _createTable();
       _databaseOp.insert('foods', onImageStorage(imgPath).toJson());
+      EasyLoading.showToast('初始化数据库，稍后再试');
     });
   }
 
@@ -54,4 +56,8 @@ class FoodsService {
     });
   }
 
+  void delete(int foodId) async {
+    await _databaseOp.delete('foods', 'id = $foodId');
+    EasyLoading.showToast('删除成功');
+  }
 }
