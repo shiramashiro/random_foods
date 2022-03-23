@@ -1,9 +1,11 @@
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:random_foods/models/food.dart';
 import 'package:random_foods/service/database/db_operation.dart';
 import 'package:random_foods/utils/callbacks.dart';
 import 'package:random_foods/utils/picture_operation.dart';
 
-class SaveFoodService {
+class FoodsService {
   final DatabaseOp _databaseOp = DatabaseOp();
   final PictureOperation _pictureOp = PictureOperation();
 
@@ -21,24 +23,35 @@ class SaveFoodService {
     );
   }
 
-  storage({
+  void valid({
+    required String? foodName,
+    required XFile? file,
+    required ValidSuccess success,
+  }) {
+    if (foodName != null && file != null) {
+      success();
+    } else {
+      EasyLoading.showToast('请输入完整的信息！');
+    }
+  }
+
+  void storage({
     required XFile file,
     required OnImageStorage onImageStorage,
   }) async {
-    _pictureOp.writeImageIntoDir(await file.readAsBytes(), file.name).then((imgPath) {
-      _databaseOp.dbExists('foods', isExists: () {
-        _databaseOp.insert('foods', onImageStorage(imgPath).toJson());
-      }, notExists: () {
-        _createTable().then((value) {
-          _databaseOp.insert('foods', onImageStorage(imgPath).toJson());
-        });
-      });
+    String imgPath = await _pictureOp.writeImageIntoDir(await file.readAsBytes(), file.name);
+    _databaseOp.dbExists('foods', isExists: () {
+      _databaseOp.insert('foods', onImageStorage(imgPath).toJson());
+    }, notExists: () async {
+      await _createTable();
+      _databaseOp.insert('foods', onImageStorage(imgPath).toJson());
     });
   }
 
-  display() {
+  void display(QuerySuccess success) {
     _databaseOp.select('foods', success: (e) {
-      print(e);
+      success(e);
     });
   }
+
 }

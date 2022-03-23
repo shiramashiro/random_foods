@@ -1,3 +1,4 @@
+import 'package:random_foods/models/food.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -11,15 +12,14 @@ class TableField {
 
 typedef DatabaseIsExists = void Function();
 typedef DatabaseNotExists = void Function();
-typedef QuerySuccess = void Function(List<Map<String, Object?>>);
+typedef QuerySuccess = void Function(List<Food> foods);
 
-/// 操作表数据时，必须要连接数据库。
 class Operation {
   Future<Database> getDatabase(String table) async {
     return await openDatabase(join(await getDatabasesPath(), table));
   }
 
-  dbExists(
+  void dbExists(
     String table, {
     required DatabaseIsExists isExists,
     DatabaseNotExists? notExists,
@@ -32,7 +32,6 @@ class Operation {
   }
 }
 
-/// 操作表数据相关的，各类增删改查。
 class DatabaseOp extends Operation {
   Future<Database> _executeSql({
     required String sql,
@@ -68,7 +67,6 @@ class DatabaseOp extends Operation {
     await _executeSql(sql: _mergeSql(fields, table), table: table);
   }
 
-  /// 删除表
   void deleteTable(String table) {
     dbExists(table, isExists: () async {
       deleteDatabase('${await getDatabasesPath()}/$table');
@@ -78,9 +76,8 @@ class DatabaseOp extends Operation {
   void insert(String table, Map<String, Object?> values) {
     dbExists(table, isExists: () async {
       Database db = await super.getDatabase(table);
-      db.insert(table, values).then((future) {
-        db.close();
-      });
+      await db.insert(table, values);
+      db.close();
     });
   }
 
@@ -90,11 +87,14 @@ class DatabaseOp extends Operation {
     String? where,
   }) {
     dbExists(table, isExists: () async {
-      Database db = await super.getDatabase(table);
-      db.query(table, where: where).then((result) {
-        success(result);
-        db.close();
-      });
+      var db = await super.getDatabase(table);
+      var data = await db.query(table, where: where);
+      var list = <Food>[];
+      for (var element in data) {
+        list.add(Food.fromJson(element));
+      }
+      success(list);
+      db.close();
     });
   }
 }

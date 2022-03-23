@@ -1,4 +1,4 @@
-class DateUtils {
+class DateTimeManager {
   final DateTime _dateTime = DateTime.now();
 
   String getDate() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:random_foods/pages/home_page.dart';
 
 void main() {
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
         backgroundColor: const Color.fromRGBO(246, 246, 246, 1.0),
       ),
       home: const HomePage(),
+      builder: EasyLoading.init(),
     );
   }
 }

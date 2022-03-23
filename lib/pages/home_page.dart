@@ -3,6 +3,7 @@ import 'package:random_foods/components/food_card.dart';
 import 'package:random_foods/components/text_icon_button.dart';
 import 'package:random_foods/models/food.dart';
 import 'package:random_foods/pages/add_foods_page.dart';
+import 'package:random_foods/pages/show_foods_page.dart';
 import 'package:random_foods/service/random_foods.dart';
 import 'package:random_foods/utils/road_map.dart';
 
@@ -49,6 +50,13 @@ class _HomePageState extends State<HomePage> {
                   icon: Icons.add,
                   text: '增加食物',
                 ),
+                TextIconButton(
+                  onTap: () {
+                    RoadMap.push(context, const ShowFoodsPage());
+                  },
+                  icon: Icons.add,
+                  text: '增加食物',
+                )
               ],
             ),
             Center(

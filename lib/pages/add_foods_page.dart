@@ -1,12 +1,11 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:random_foods/components/form_input.dart';
 import 'package:random_foods/components/image_selector.dart';
 import 'package:random_foods/components/text_icon_button.dart';
 import 'package:random_foods/models/food.dart';
-import 'package:random_foods/service/save_food_service.dart';
+import 'package:random_foods/service/foods_service.dart';
+import 'package:random_foods/utils/datetime_manager.dart';
 
 class AddFoodsPage extends StatefulWidget {
   const AddFoodsPage({Key? key}) : super(key: key);
@@ -17,7 +16,7 @@ class AddFoodsPage extends StatefulWidget {
 
 class _AddFoodsPageState extends State<AddFoodsPage> {
   final TextEditingController _name = TextEditingController();
-  final SaveFoodService _service = SaveFoodService();
+  final FoodsService _service = FoodsService();
   XFile? imageFile;
 
   @override
@@ -50,23 +49,26 @@ class _AddFoodsPageState extends State<AddFoodsPage> {
               ),
               TextIconButton(
                 text: '保存',
-                icon: Icons.add,
-                onTap: () async {
-                  _service.storage(
-                    file: imageFile!,
-                    onImageStorage: (image) {
-                      return Food(name: _name.text, image: image);
+                marginTop: 30,
+                onTap: () {
+                  _service.valid(
+                    file: imageFile,
+                    foodName: _name.text,
+                    success: () {
+                      _service.storage(
+                        file: imageFile!,
+                        onImageStorage: (image) {
+                          return Food(
+                            name: _name.text,
+                            image: image,
+                            entryDate: DateTimeManager().getDateTime(),
+                          );
+                        },
+                      );
                     },
                   );
                 },
               ),
-              TextIconButton(
-                icon: Icons.arrow_forward,
-                text: '获取信息',
-                onTap: () {
-                  _service.display();
-                },
-              )
             ],
           ),
         ),
