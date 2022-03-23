@@ -1,6 +1,8 @@
 class Food {
   int? id;
   String? name;
+  double? price;
+  double? star;
   String? image;
   int? times;
   String? eatenDate;
@@ -13,6 +15,8 @@ class Food {
     name = json['name'];
     image = json['image'];
     times = json['times'];
+    price = json['price'];
+    star = json['star'];
     eatenDate = json['eatenDate'];
     entryDate = json['entryDate'];
   }
@@ -22,6 +26,8 @@ class Food {
     data['name'] = name;
     data['image'] = image;
     data['times'] = times;
+    data['price'] = price;
+    data['star'] = star;
     data['eatenDate'] = eatenDate;
     data['entryDate'] = entryDate;
     return data;

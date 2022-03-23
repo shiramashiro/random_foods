@@ -55,34 +55,32 @@ class _HomePageState extends State<HomePage> {
                   },
                   icon: Icons.emoji_food_beverage,
                   text: '已有食物',
-                )
-              ],
-            ),
-            Center(
-              child: TextIconButton(
-                onTap: () {
-                  _service.display((foods) {
-                    Food food = foods[_service.getRandom(foods.length)];
-                    setState(() {
-                      _todayFood = TodayFood(
-                        food: food,
-                        onTap: () {
-                          var times = food.times;
-                          times = times! + 1;
-                          food.times = times;
-                          food.eatenDate = DateTimeManager().getDateTime();
-                          _service.update(food);
-                          setState(() {
-                            _todayFood = Container();
-                          });
-                        },
-                      );
+                ),
+                TextIconButton(
+                  onTap: () {
+                    _service.display((foods) {
+                      Food food = foods[_service.getRandom(foods.length)];
+                      setState(() {
+                        _todayFood = TodayFood(
+                          food: food,
+                          onTap: () {
+                            var times = food.times;
+                            times = times! + 1;
+                            food.times = times;
+                            food.eatenDate = DateTimeManager().getDateTime();
+                            _service.update(food);
+                            setState(() {
+                              _todayFood = Container();
+                            });
+                          },
+                        );
+                      });
                     });
-                  });
-                },
-                icon: Icons.query_builder,
-                text: '今日随机',
-              ),
+                  },
+                  icon: Icons.query_builder,
+                  text: '今日随机',
+                ),
+              ],
             ),
             _todayFood,
           ],

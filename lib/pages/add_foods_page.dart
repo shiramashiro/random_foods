@@ -16,6 +16,9 @@ class AddFoodsPage extends StatefulWidget {
 
 class _AddFoodsPageState extends State<AddFoodsPage> {
   final TextEditingController _name = TextEditingController();
+  final TextEditingController _price = TextEditingController();
+  final TextEditingController _star = TextEditingController();
+  final GlobalKey _form = GlobalKey();
   final FoodsService _service = FoodsService();
   XFile? imageFile;
 
@@ -31,13 +34,28 @@ class _AddFoodsPageState extends State<AddFoodsPage> {
         ),
         padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
         child: Form(
+          key: _form,
           child: Column(
             children: [
               FormInput(
                 controller: _name,
                 validator: (e) {},
                 label: '名称',
-                hint: '请输入食物名称',
+                hint: '输入食物名称',
+                icon: Icons.add,
+              ),
+              FormInput(
+                controller: _price,
+                validator: (e) {},
+                label: '价格',
+                hint: '输入食物的价格',
+                icon: Icons.add,
+              ),
+              FormInput(
+                controller: _star,
+                validator: (e) {},
+                label: '分数',
+                hint: '输入对食物的评分',
                 icon: Icons.add,
               ),
               ImageSelector(
@@ -51,6 +69,7 @@ class _AddFoodsPageState extends State<AddFoodsPage> {
                 text: '保存',
                 marginTop: 30,
                 onTap: () {
+                  if ((_form.currentState as FormState).validate()) {}
                   _service.valid(
                     file: imageFile,
                     foodName: _name.text,

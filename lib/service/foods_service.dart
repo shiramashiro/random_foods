@@ -23,6 +23,7 @@ class FoodsService {
         TableField(name: 'name', type: 'text'),
         TableField(name: 'image', type: 'text'),
         TableField(name: 'times', type: 'integer'),
+        TableField(name: 'price', type: 'double'),
         TableField(name: 'entryDate', type: 'text'),
         TableField(name: 'eatenDate', type: 'text'),
       ],
